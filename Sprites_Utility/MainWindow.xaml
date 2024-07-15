@@ -26,7 +26,7 @@
         <Menu Grid.Column="1" Height="20" Margin="0,0,0,0" VerticalAlignment="Top">
             <MenuItem Header="File" x:Name="FileButtonCombiner">
                 <MenuItem Header="Open" x:Name="OpenButtonCombiner" Click="OpenButtonCombiner_Click"/>
-                <MenuItem Header="Save As" x:Name="SaveAsButtonCombiner"/>
+                <MenuItem Header="Save As" x:Name="SaveAsButtonCombiner" Click="SaveAsButtonCombiner_Click"/>
             </MenuItem>
         </Menu>
     </Grid>
