@@ -1,0 +1,33 @@
+﻿<Window x:Class="Sprites_Utility.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sprites_Utility"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Image x:Name="ImageBoxSplitter" Margin="0,20,0,0"/>
+        <Image x:Name="ImageBoxCombiner" Grid.Column="1" Margin="0,20,0,0"/>
+        <Menu Height="20" Margin="0,0,0,0" VerticalAlignment="Top">
+            <MenuItem Header="File" x:Name="FileButtonSplitter">
+                <MenuItem Header="Open" x:Name="OpenButtonSplitter" Click="OpenButtonSplitter_Click"/>
+                <MenuItem Header="Save As" x:Name="SaveAsButtonSplitter" Click="SaveAsButtonSplitter_Click"/>
+            </MenuItem>
+            <MenuItem Header="column" IsEnabled="False" />
+            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="columnSplitter"/>
+            <MenuItem Header="row" IsEnabled="False" />
+            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="rowSplitter"/>
+        </Menu>
+        <Menu Grid.Column="1" Height="20" Margin="0,0,0,0" VerticalAlignment="Top">
+            <MenuItem Header="File" x:Name="FileButtonCombiner">
+                <MenuItem Header="Open" x:Name="OpenButtonCombiner" Click="OpenButtonCombiner_Click"/>
+                <MenuItem Header="Save As" x:Name="SaveAsButtonCombiner"/>
+            </MenuItem>
+        </Menu>
+    </Grid>
+</Window>
