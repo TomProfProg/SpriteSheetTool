@@ -65,7 +65,6 @@ namespace Sprites_Utility
             int rectWidth = width / columnNbr;
             int rectHeight = height / rowNbr;
 
-
             for (int y = 0; y < rowNbr; y++)
             {
                 for (int x = 0; x < columnNbr; x++)
@@ -80,10 +79,21 @@ namespace Sprites_Utility
                     }
                 }
             }
-
-
         }
 
+
+        void ApplyParameterCombiner(string _fileName)
+        {
+            //imageToSplit.SourceRect = new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
+            BitmapSource source = wBitmap;
+            BitmapEncoder encoder = new JpegBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(source));
+            using (var fileStream = new System.IO.FileStream(_fileName + ".jpg", System.IO.FileMode.Create))
+            {
+                encoder.Save(fileStream);
+            }
+
+        }
         private void SaveAsButtonSplitter_Click(object sender, RoutedEventArgs e)
         {
             if (saveFileDialog.ShowDialog() == true)
@@ -93,6 +103,7 @@ namespace Sprites_Utility
             }
         }
 
+        WriteableBitmap wBitmap;
         private void OpenButtonCombiner_Click(object sender, RoutedEventArgs e)
         {
             openFileDialog.Filter = "PNG images|*.png|Bitmap Images|*.bmp|JPEG Images|*.jpg;jpeg|All formats|*.*";
@@ -140,8 +151,17 @@ namespace Sprites_Utility
 
 
                 //on affiche l'image finale
-                WriteableBitmap wBitmap = new WriteableBitmap(targetBitmap);
+                wBitmap = new WriteableBitmap(targetBitmap);
                 ImageBoxCombiner.Source = wBitmap;
+            }
+        }
+
+        private void SaveAsButtonCombiner_Click(object sender, RoutedEventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                ApplyParameterCombiner(saveFileDialog.FileName);
+
             }
         }
     }
