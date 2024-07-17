@@ -14,7 +14,7 @@
         <Image x:Name="ImageBoxSplitter" Margin="0,20,0,0"/>
         <Image x:Name="ImageBoxCombiner" Grid.Column="1" Margin="0,20,0,0"/>
         <Menu Height="20" Margin="0,0,0,0" VerticalAlignment="Top">
-            <MenuItem Header="File" x:Name="FileButtonSplitter">
+            <MenuItem Header="File" x:Name="FileButtonSplitter" Click="FileButtonSplitter_Click">
                 <MenuItem Header="Open" x:Name="OpenButtonSplitter" Click="OpenButtonSplitter_Click"/>
                 <MenuItem Header="Save As" x:Name="SaveAsButtonSplitter" Click="SaveAsButtonSplitter_Click"/>
             </MenuItem>
@@ -22,12 +22,32 @@
             <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="columnSplitter"/>
             <MenuItem Header="row" IsEnabled="False" />
             <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="rowSplitter"/>
+            <Label Content="Splitter" Margin="0,-5,0,0" Width="84" RenderTransformOrigin="0.494,0.418" Height="38" IsEnabled="False">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="0"/>
+                        <RotateTransform/>
+                        <TranslateTransform X="0"/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
         </Menu>
         <Menu Grid.Column="1" Height="20" Margin="0,0,0,0" VerticalAlignment="Top">
-            <MenuItem Header="File" x:Name="FileButtonCombiner">
+            <MenuItem Header="File" x:Name="FileButtonCombiner" Click="FileButtonCombiner_Click">
                 <MenuItem Header="Open" x:Name="OpenButtonCombiner" Click="OpenButtonCombiner_Click"/>
                 <MenuItem Header="Save As" x:Name="SaveAsButtonCombiner" Click="SaveAsButtonCombiner_Click"/>
             </MenuItem>
+            <Label Margin="0,-5,0,0"  Content="Combiner" Width="84" RenderTransformOrigin="0.494,0.418" Height="38" IsEnabled="False">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="0"/>
+                        <RotateTransform/>
+                        <TranslateTransform X="0"/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
         </Menu>
     </Grid>
 </Window>

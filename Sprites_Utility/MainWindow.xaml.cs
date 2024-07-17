@@ -30,8 +30,16 @@ namespace Sprites_Utility
         public MainWindow()
         {
             InitializeComponent();
+            UpdateButtons();
         }
 
+
+        void UpdateButtons()
+        {
+            SaveAsButtonSplitter.IsEnabled = ImageBoxSplitter.Source != null;
+            SaveAsButtonCombiner.IsEnabled = ImageBoxCombiner.Source != null;
+
+        }
         private void OpenButtonSplitter_Click(object sender, RoutedEventArgs e)
         {
             string fileName;
@@ -51,55 +59,73 @@ namespace Sprites_Utility
 
         }
 
-        void ApplyParameterSplitter(string _fileName)
+        bool ApplyParameterSplitter(string _fileName, string extension)
         {
-            int width = imageToSplit.PixelWidth;
-            int height = imageToSplit.PixelHeight;
-
-            int columnNbr;
-            int.TryParse(columnSplitter.Text, out columnNbr);
-
-            int rowNbr;
-            int.TryParse(rowSplitter.Text, out rowNbr);
-
-            int rectWidth = width / columnNbr;
-            int rectHeight = height / rowNbr;
-
-            for (int y = 0; y < rowNbr; y++)
+            if (imageToSplit != null)
             {
-                for (int x = 0; x < columnNbr; x++)
+                int width = imageToSplit.PixelWidth;
+                int height = imageToSplit.PixelHeight;
+
+                int columnNbr;
+                int.TryParse(columnSplitter.Text, out columnNbr);
+
+                int rowNbr;
+                int.TryParse(rowSplitter.Text, out rowNbr);
+
+                if(columnNbr == 0 || rowNbr ==0)
+                    return false;
+                int rectWidth = width / columnNbr;
+                int rectHeight = height / rowNbr;
+
+                for (int y = 0; y < rowNbr; y++)
                 {
-                    //imageToSplit.SourceRect = new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
-                    BitmapSource source = new CroppedBitmap(imageToSplit, new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight));
-                    BitmapEncoder encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(source));
-                    using (var fileStream = new System.IO.FileStream(_fileName + "_" + x.ToString() + "_" + y.ToString() + ".jpg", System.IO.FileMode.Create))
+                    for (int x = 0; x < columnNbr; x++)
                     {
-                        encoder.Save(fileStream);
+                        //imageToSplit.SourceRect = new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
+                        BitmapSource source = new CroppedBitmap(imageToSplit, new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight));
+                        BitmapEncoder encoder = new PngBitmapEncoder();
+                        encoder.Frames.Add(BitmapFrame.Create(source));
+                        using (var fileStream = new System.IO.FileStream(_fileName + "_" + y.ToString() + "_" + x.ToString() + extension, System.IO.FileMode.Create))
+                        {
+                            encoder.Save(fileStream);
+                            
+                        }
                     }
+                }
+                return true;
+            }
+            return false;
+        }
+
+
+        void ApplyParameterCombiner(string _fileName, string extension)
+        {
+            if (wBitmap != null)
+            {
+                //imageToSplit.SourceRect = new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
+                BitmapSource source = wBitmap;
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(source));
+                using (var fileStream = new System.IO.FileStream(_fileName + extension, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
                 }
             }
         }
-
-
-        void ApplyParameterCombiner(string _fileName)
-        {
-            //imageToSplit.SourceRect = new Int32Rect(x * rectWidth, y * rectHeight, rectWidth, rectHeight);
-            BitmapSource source = wBitmap;
-            BitmapEncoder encoder = new JpegBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(source));
-            using (var fileStream = new System.IO.FileStream(_fileName + ".jpg", System.IO.FileMode.Create))
-            {
-                encoder.Save(fileStream);
-            }
-
-        }
         private void SaveAsButtonSplitter_Click(object sender, RoutedEventArgs e)
         {
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                ApplyParameterSplitter(saveFileDialog.FileName);
 
+            if (ImageBoxSplitter.Source != null)
+            {
+                saveFileDialog.Filter = "PNG images|*.png";
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    ApplyParameterSplitter(saveFileDialog.FileName, ".png");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Impossible d'exporter les multiples sprites: Aucune image originale n'a été chargée.");
             }
         }
 
@@ -158,11 +184,29 @@ namespace Sprites_Utility
 
         private void SaveAsButtonCombiner_Click(object sender, RoutedEventArgs e)
         {
-            if (saveFileDialog.ShowDialog() == true)
+            if (ImageBoxCombiner.Source != null)
             {
-                ApplyParameterCombiner(saveFileDialog.FileName);
+                saveFileDialog.Filter = "PNG images|*.png";
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    ApplyParameterCombiner(saveFileDialog.FileName, ".png");
 
+                }
             }
+            else
+            {
+                MessageBox.Show("Impossible d'exporter l'image combinée': Aucune image originale n'a été chargée.");
+            }
+        }
+
+        private void FileButtonCombiner_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateButtons();
+        }
+
+        private void FileButtonSplitter_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateButtons();
         }
     }
 }
