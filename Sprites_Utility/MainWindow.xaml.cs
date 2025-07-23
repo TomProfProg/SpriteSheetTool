@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -174,6 +175,11 @@ namespace Sprites_Utility
                     int baseWidth = bitmapImageCombinedSource[0].PixelWidth;
                     int baseHeight = bitmapImageCombinedSource[0].PixelHeight;
 
+                    if ((bool)ForceSquare.IsChecked == false)
+                    {
+                        int.TryParse(column_Combiner.Text, out nbColumns);
+                        int.TryParse(row_Combiner.Text, out nbRows);
+                    }
                     // Draw a Rectangle
                     DrawingVisual dVisual = new DrawingVisual();
                     if (bitmapImageCombinedSource.Length >= 1)
@@ -270,6 +276,21 @@ namespace Sprites_Utility
                     rowSplitter.Text = "99";
                 }
             }
+        }
+
+        private void ForceSquare_Checked(object sender, RoutedEventArgs e)
+        {
+            if (column_Combiner != null && row_Combiner != null)
+                if ((bool)ForceSquare.IsChecked)
+                {
+                    column_Combiner.IsEnabled = false;
+                    row_Combiner.IsEnabled = false;
+                }
+                else
+                {
+                    column_Combiner.IsEnabled = true;
+                    row_Combiner.IsEnabled = true;
+                }
         }
     }
 }

@@ -48,6 +48,11 @@
                     </TransformGroup>
                 </Label.RenderTransform>
             </Label>
+            <CheckBox x:Name="ForceSquare" Content="Force Square" IsChecked="True" Checked="ForceSquare_Checked" />
+            <MenuItem Header="column" IsEnabled="False" />
+            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="column_Combiner" TextChanged="columnSplitter_TextChanged" RenderTransformOrigin="0.5,0.5"/>
+            <MenuItem Header="row" IsEnabled="False" />
+            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="row_Combiner" TextChanged="rowSplitter_TextChanged"/>
         </Menu>
     </Grid>
 </Window>
