@@ -1,0 +1,7 @@
+﻿################################################################################
+# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
+################################################################################
+
+/Sprites_Utility/obj
+/.vs
+/Sprites_Utility/bin
