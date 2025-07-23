@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,11 +48,19 @@ namespace Sprites_Utility
             openFileDialog.Filter = "PNG images|*.png|Bitmap Images|*.bmp|JPEG Images|*.jpg;jpeg|All formats|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
-                fileName = openFileDialog.FileName;
+                try
+                {
+                    fileName = openFileDialog.FileName;
 
-                Uri imageUri = new Uri(fileName);
-                imageToSplit = new BitmapImage(imageUri);
-                ImageBoxSplitter.Source = imageToSplit;
+                    Uri imageUri = new Uri(fileName);
+                    imageToSplit = new BitmapImage(imageUri);
+                    ImageBoxSplitter.Source = imageToSplit;
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Une erreur est survenue, veuillez choisir un autre fichier.", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
             }
 
@@ -72,7 +81,7 @@ namespace Sprites_Utility
                 int rowNbr;
                 int.TryParse(rowSplitter.Text, out rowNbr);
 
-                if(columnNbr == 0 || rowNbr ==0)
+                if (columnNbr == 0 || rowNbr == 0)
                     return false;
                 int rectWidth = width / columnNbr;
                 int rectHeight = height / rowNbr;
@@ -88,7 +97,7 @@ namespace Sprites_Utility
                         using (var fileStream = new System.IO.FileStream(_fileName + "_" + y.ToString() + "_" + x.ToString() + extension, System.IO.FileMode.Create))
                         {
                             encoder.Save(fileStream);
-                            
+
                         }
                     }
                 }
@@ -114,18 +123,28 @@ namespace Sprites_Utility
         }
         private void SaveAsButtonSplitter_Click(object sender, RoutedEventArgs e)
         {
-
-            if (ImageBoxSplitter.Source != null)
+            try
             {
-                saveFileDialog.Filter = "PNG images|*.png";
-                if (saveFileDialog.ShowDialog() == true)
+                if (ImageBoxSplitter.Source != null)
                 {
-                    ApplyParameterSplitter(saveFileDialog.FileName, ".png");
+                    saveFileDialog.Filter = "PNG images|*.png";
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        ApplyParameterSplitter(saveFileDialog.FileName, ".png");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Impossible d'exporter les multiples sprites: Aucune image originale n'a été chargée.");
                 }
             }
-            else
+            catch (IOException ioe)
             {
-                MessageBox.Show("Impossible d'exporter les multiples sprites: Aucune image originale n'a été chargée.");
+                MessageBox.Show("Les images sont déjà ouverte par un processus, certainement par le combiner, impossible de réécrire par dessus.");
+            }
+            catch (Exception e2)
+            {
+                MessageBox.Show("Une erreur est survenue.");
             }
         }
 
@@ -137,48 +156,55 @@ namespace Sprites_Utility
             openFileDialog.Multiselect = true;
             if (openFileDialog.ShowDialog() == true)
             {
-                string[] fileNames = openFileDialog.FileNames;
-
-                BitmapImage[] bitmapImageCombinedSource = new BitmapImage[fileNames.Length];
-                for (int i = 0; i < fileNames.Length; i++)
+                try
                 {
-                    Uri uri = new Uri(fileNames[i]);
-                    bitmapImageCombinedSource[i] = new BitmapImage(uri);
-                }
+                    string[] fileNames = openFileDialog.FileNames;
 
-                int nbImages = bitmapImageCombinedSource.Length;
-                int nbColumns = (int)MathF.Ceiling(MathF.Sqrt(nbImages));
-                int overRow = (int)(((nbColumns * nbColumns) - nbImages) / nbColumns);
-                int nbRows = nbColumns - overRow;
-                int baseWidth = bitmapImageCombinedSource[0].PixelWidth;
-                int baseHeight = bitmapImageCombinedSource[0].PixelHeight;
-
-                // Draw a Rectangle
-                DrawingVisual dVisual = new DrawingVisual();
-                if (bitmapImageCombinedSource.Length >= 1)
-                {
-                    using (DrawingContext dc = dVisual.RenderOpen())
+                    BitmapImage[] bitmapImageCombinedSource = new BitmapImage[fileNames.Length];
+                    for (int i = 0; i < fileNames.Length; i++)
                     {
-                        for (int y = 0; y < nbRows; y++)
+                        Uri uri = new Uri(fileNames[i]);
+                        bitmapImageCombinedSource[i] = new BitmapImage(uri);
+                    }
+
+                    int nbImages = bitmapImageCombinedSource.Length;
+                    int nbColumns = (int)MathF.Ceiling(MathF.Sqrt(nbImages));
+                    int overRow = (int)(((nbColumns * nbColumns) - nbImages) / nbColumns);
+                    int nbRows = nbColumns - overRow;
+                    int baseWidth = bitmapImageCombinedSource[0].PixelWidth;
+                    int baseHeight = bitmapImageCombinedSource[0].PixelHeight;
+
+                    // Draw a Rectangle
+                    DrawingVisual dVisual = new DrawingVisual();
+                    if (bitmapImageCombinedSource.Length >= 1)
+                    {
+                        using (DrawingContext dc = dVisual.RenderOpen())
                         {
-                            for (int x = 0; x < nbColumns; x++)
+                            for (int y = 0; y < nbRows; y++)
                             {
-                                int index = y * nbColumns + x;
-                                if (index >= nbImages) break;
-                                //Draw à la position dans le rectangle destination
-                                dc.DrawImage(bitmapImageCombinedSource[index], new Rect(x * baseWidth, y * baseHeight, bitmapImageCombinedSource[index].PixelWidth, bitmapImageCombinedSource[index].PixelHeight));
+                                for (int x = 0; x < nbColumns; x++)
+                                {
+                                    int index = y * nbColumns + x;
+                                    if (index >= nbImages) break;
+                                    //Draw à la position dans le rectangle destination
+                                    dc.DrawImage(bitmapImageCombinedSource[index], new Rect(x * baseWidth, y * baseHeight, bitmapImageCombinedSource[index].PixelWidth, bitmapImageCombinedSource[index].PixelHeight));
+                                }
                             }
                         }
                     }
+                    //taille de la texture final à définir dans le constructeur ici
+                    RenderTargetBitmap targetBitmap = new RenderTargetBitmap(baseWidth * nbColumns, baseHeight * nbRows, 96, 96, PixelFormats.Default);
+                    targetBitmap.Render(dVisual);
+
+
+                    //on affiche l'image finale
+                    wBitmap = new WriteableBitmap(targetBitmap);
+                    ImageBoxCombiner.Source = wBitmap;
                 }
-                //taille de la texture final à définir dans le constructeur ici
-                RenderTargetBitmap targetBitmap = new RenderTargetBitmap(baseWidth * nbColumns, baseHeight * nbRows, 96, 96, PixelFormats.Default);
-                targetBitmap.Render(dVisual);
-
-
-                //on affiche l'image finale
-                wBitmap = new WriteableBitmap(targetBitmap);
-                ImageBoxCombiner.Source = wBitmap;
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Une erreur est survenue, veuillez choisir un autre fichier.", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -207,6 +233,43 @@ namespace Sprites_Utility
         private void FileButtonSplitter_Click(object sender, RoutedEventArgs e)
         {
             UpdateButtons();
+        }
+
+        private void rowSplitter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (imageToSplit != null && rowSplitter.Text != null && rowSplitter.Text != string.Empty)
+            {
+                int rowValue = 0;
+                int.TryParse(rowSplitter.Text, out rowValue);
+                if (rowValue > imageToSplit.Height)
+                {
+                    MessageBox.Show("Il n'est pas possible d'avoir un nombre de lignes supérieur à la hauteur d'image en pixels");
+                    rowSplitter.Text = imageToSplit.Width.ToString();
+                }
+                if (rowValue > 99)
+                {
+                    MessageBox.Show("Il n'est pas possible de définir plus de 99 lignes");
+                    rowSplitter.Text = "99";
+                }
+            }
+        }
+        private void columnSplitter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (imageToSplit != null && columnSplitter.Text != null && columnSplitter.Text != string.Empty)
+            {
+                int columnValue = 0;
+                int.TryParse(columnSplitter.Text, out columnValue);
+                if (columnValue > imageToSplit.Width)
+                {
+                    MessageBox.Show("Il n'est pas possible d'avoir un nombre de colonnes supérieur à la largeur d'image en pixels");
+                    columnSplitter.Text = imageToSplit.Width.ToString();
+                }
+                else if (columnValue > 99 || columnValue > imageToSplit.Width)
+                {
+                    MessageBox.Show("Il n'est pas possible de définir plus de 99 colonnes");
+                    rowSplitter.Text = "99";
+                }
+            }
         }
     }
 }

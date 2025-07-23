@@ -19,9 +19,9 @@
                 <MenuItem Header="Save As" x:Name="SaveAsButtonSplitter" Click="SaveAsButtonSplitter_Click"/>
             </MenuItem>
             <MenuItem Header="column" IsEnabled="False" />
-            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="columnSplitter"/>
+            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="columnSplitter" TextChanged="columnSplitter_TextChanged" RenderTransformOrigin="0.5,0.5"/>
             <MenuItem Header="row" IsEnabled="False" />
-            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="rowSplitter"/>
+            <TextBox TextWrapping="Wrap" Text="1" Width="24" x:Name="rowSplitter" TextChanged="rowSplitter_TextChanged"/>
             <Label Content="Splitter" Margin="0,-5,0,0" Width="84" RenderTransformOrigin="0.494,0.418" Height="38" IsEnabled="False">
                 <Label.RenderTransform>
                     <TransformGroup>
